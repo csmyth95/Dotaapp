@@ -2,9 +2,11 @@ package com.example.conor.dotaapp;
 
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -27,9 +29,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 public class MatchFragment extends Fragment {
 
@@ -53,8 +54,7 @@ public class MatchFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.action_refresh) {
-            FetchMatch matchTask = new FetchMatch();
-            matchTask.execute("144396115");
+            updateMatch();
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -65,7 +65,7 @@ public class MatchFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
-        // Create some dummy data for the ListView.  Here's a sample weekly matches
+        /*// Create some dummy data for the ListView.  Here's a sample weekly matches
         String[] data = {
                 "Mon 6/23 20:34 - puck - 10/3",
                 "Tue 6/24 21:53 - slark - 21/4",
@@ -77,15 +77,15 @@ public class MatchFragment extends Fragment {
         };
         List<String> matchList = new ArrayList<String>(Arrays.asList(data));
 
-        // Now that we have some dummy match data, create an ArrayAdapter.
-        // The ArrayAdapter will take data from a source (like our dummy match) and
+        // Now that we have some dummy match data, create an ArrayAdapter.*/
+        // The ArrayAdapter will take data from a source and
         // use it to populate the ListView it's attached to.
         mMatchAdapter =
                 new ArrayAdapter<String>(
                         getActivity(), // The current context (this activity)
                         R.layout.list_item_match, // The name of the layout ID.
                         R.id.list_item_match_textview, // The ID of the textview to populate.
-                        matchList);
+                        new ArrayList<String>());
 
         ListView listView = (ListView) rootView.findViewById(R.id.listview_match);
         listView.setAdapter(mMatchAdapter);
@@ -102,9 +102,24 @@ public class MatchFragment extends Fragment {
         });
 
         return rootView;
-
     }
 
+    //Method to update match data when app starts
+    private void updateMatch(){
+        FetchMatch matchTask = new FetchMatch();
+
+        //Set defaultID of DOTA API in the settings menu
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        String defaultID = prefs.getString(getString(R.string.steam_id_key),
+                getString(R.string.steam_id_default));
+        matchTask.execute(defaultID);
+    }
+
+    @Override
+    public void onStart(){
+        super.onStart();
+        updateMatch();
+    }
 
     public class FetchMatch extends AsyncTask<String, Void, String[]> {
 
@@ -112,7 +127,13 @@ public class MatchFragment extends Fragment {
         private final String LOG_MATCH_JSON = "Match JSON Object";
         private final String LOG_MATCH_ARRAY = "Match JSON Array";
 
-
+        //Date/time conversion method TO BE UTILISED
+        private String getReadableDateString(long time){
+            // Because the API returns a unix timestamp (measured in seconds),
+            // it must be converted to milliseconds in order to be converted to valid date.
+            SimpleDateFormat shortenedDateFormat = new SimpleDateFormat("EEE MMM dd");
+            return shortenedDateFormat.format(time);
+        }
         //---------------------------------------------------------------------------------------------------------------
 
         /**
@@ -152,7 +173,8 @@ public class MatchFragment extends Fragment {
             String[] resultStrs = new String[numMatches];
             for (int i = 0; i < matchArray.length(); i++) {
                 // For now, using the format "Date, hero, match_id"
-                String date, hero, match_id;
+                String hero, match_id, dateTime;
+                long date;
 
                 // Get the JSON object representing a single match
                 JSONObject singleMatch = matchArray.getJSONObject(i);
@@ -167,7 +189,9 @@ public class MatchFragment extends Fragment {
                 // "this saturday".
                 // Cheating to convert this to UTC time, which is what we want anyhow.
                 // To get the starting time of the match in UTC seconds
-                date = singleMatch.getString(OWM_START);
+                date = Long.parseLong(singleMatch.getString(OWM_START));
+                //Output actual date instead of just seconds
+                dateTime = getReadableDateString(date);
 
                 //Array of players
                 JSONArray allPlayers = matchArray.getJSONObject(i).getJSONArray(OWM_PLAYERS);
@@ -192,7 +216,7 @@ public class MatchFragment extends Fragment {
                     JSONObject singlePlayer = allPlayers.getJSONObject(j);
                 }
                 //Add strings to resultStrs at index i
-                resultStrs[i] = "Date: "+date+", Hero: "+hero+", Match ID: "+match_id;
+                resultStrs[i] = "Date: "+dateTime+", Hero: "+hero+", Match ID: "+match_id;
                 Log.v(LOG_TAG, "ResultStrs["+i+"]: " + resultStrs[i]);
             }
 
@@ -222,6 +246,7 @@ public class MatchFragment extends Fragment {
             String format = "json";
             int numMatches = 5;
             String KEY = "11FA65AF0B794D8A574FAEE5F26A8ED2";
+            //Default ID for steam account
             int defaultID = 144396115;
 
             try {

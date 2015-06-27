@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- Preference to set defaultID -->
+    <EditTextPreference
+        android:key="@string/steam_id_key"
+        android:label="@string/steam_id_label"
+        android:defaultValue="@string/steam_id_default"
+        android:inputType="text"
+        android:singleLine="true"
+        />
+    <!--Preference to set number of matches to display -->
+    <EditTextPreference
+        android:key="@string/num_matches_key"
+        android:label="@string/num_matches_label"
+        android:defaultValue="@string/num_matches_default"
+        android:inputType="number"
+        android:singleLine="true"
+    />
+</PreferenceScreen>
