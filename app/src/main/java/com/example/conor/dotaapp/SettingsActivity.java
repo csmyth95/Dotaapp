@@ -25,8 +25,8 @@ public class SettingsActivity extends PreferenceActivity
 
         // For all preferences, attach an OnPreferenceChangeListener so the UI summary can be
         // updated when the preference changes.
-        //bindPreferenceSummaryToValue(findPreference(getString(R.string.num_matches_key)));
         bindPreferenceSummaryToValue(findPreference(getString(R.string.steam_id_key)));
+        bindPreferenceSummaryToValue(findPreference(getString(R.string.num_matches_key)));
     }
 
     /**
