@@ -243,8 +243,17 @@ public class MatchFragment extends Fragment {
             // Will contain the raw JSON response as a string.
             String matchJsonStr = null;
 
-            String format = "json";
-            int numMatches = 5;
+            //SharedPreference to get user specified number of matches to display in app
+            SharedPreferences sharedPrefs =
+                    PreferenceManager.getDefaultSharedPreferences(getActivity());
+            String numOfMatches = sharedPrefs.getString(
+                    getString(R.string.num_matches_key),
+                    getString(R.string.num_matches_default)
+            );
+
+
+            String format = "json"; //Never used
+            int numMatches = Integer.parseInt(numOfMatches);
             String KEY = "11FA65AF0B794D8A574FAEE5F26A8ED2";
             //Default ID for steam account
             int defaultID = 144396115;
@@ -262,7 +271,7 @@ public class MatchFragment extends Fragment {
                 Uri builtUri = Uri.parse(MATCH_BASE_URL).buildUpon()
                         .appendQueryParameter(KEY_PARAM, KEY)
                         .appendQueryParameter(ID_PARAM, params[0])
-                        .appendQueryParameter(NUM_PARAM, Integer.toString(numMatches))
+                        .appendQueryParameter(NUM_PARAM, numOfMatches)//Integer.toString(numMatches))
                         .build();
 
                 URL url = new URL(builtUri.toString());
