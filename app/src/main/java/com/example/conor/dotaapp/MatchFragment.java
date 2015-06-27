@@ -208,7 +208,7 @@ public class MatchFragment extends Fragment {
             String matchJsonStr = null;
 
             String format = "json";
-            int numMatches = 2;
+            int numMatches = 5;
             String KEY = "11FA65AF0B794D8A574FAEE5F26A8ED2";
             int defaultID = 144396115;
 
@@ -285,8 +285,22 @@ public class MatchFragment extends Fragment {
                 Log.e(LOG_TAG, e.getMessage(), e);
                 e.printStackTrace();
             }
-
+            //happens if error getting/parsing data from match API
             return null;
+        }
+
+        /*
+            Use data from server
+         */
+        @Override
+        protected void onPostExecute(String[] result){
+            if(result != null){
+                mMatchAdapter.clear();
+                for(String matchForecastStr : result){
+                    mMatchAdapter.add(matchForecastStr);
+                }
+            }
+            //new data from DOTA 2 API server
         }
     }
 }
