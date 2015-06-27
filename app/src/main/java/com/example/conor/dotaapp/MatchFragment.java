@@ -1,6 +1,7 @@
 package com.example.conor.dotaapp;
 
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -12,6 +13,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -86,8 +88,18 @@ public class MatchFragment extends Fragment {
                         matchList);
 
         ListView listView = (ListView) rootView.findViewById(R.id.listview_match);
-
         listView.setAdapter(mMatchAdapter);
+
+        //Click listener & code to display toast
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l){
+                String match = mMatchAdapter.getItem(position);
+                Intent intent = new Intent(getActivity(), DetailActivity.class)
+                        .putExtra(Intent.EXTRA_TEXT, match);
+                startActivity(intent);
+            }
+        });
 
         return rootView;
 
@@ -155,7 +167,7 @@ public class MatchFragment extends Fragment {
                 // "this saturday".
                 // Cheating to convert this to UTC time, which is what we want anyhow.
                 // To get the starting time of the match in UTC seconds
-                date = matchArray.getJSONObject(i).getString(OWM_START);
+                date = singleMatch.getString(OWM_START);
 
                 //Array of players
                 JSONArray allPlayers = matchArray.getJSONObject(i).getJSONArray(OWM_PLAYERS);
