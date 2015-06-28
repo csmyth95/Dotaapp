@@ -243,7 +243,7 @@ public class MatchFragment extends Fragment {
             // Will contain the raw JSON response as a string.
             String matchJsonStr = null;
 
-            //SharedPreference to get user specified number of matches to display in app
+            //SharedPreference to get user specified number of matches to display in app from Settings
             SharedPreferences sharedPrefs =
                     PreferenceManager.getDefaultSharedPreferences(getActivity());
             String numOfMatches = sharedPrefs.getString(

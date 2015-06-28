@@ -2,7 +2,11 @@
     <string name="app_name">Dotapp</string>
     <string name="hello_world">Hello World</string>
     <string name="action_refresh">Refresh</string>
+
+    <!-- Action bar strings -->
     <string name="action_settings">Settings</string>
+    <string name="action_share">Share</string>
+
     <string name="title_activity_detail">Details</string>
     <string name="title_activity_settings">Settings</string>
 
