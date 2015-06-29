@@ -58,7 +58,7 @@ public class DetailActivity extends ActionBarActivity {
      */
     public static class DetailFragment extends Fragment {
 
-        private static final String MATCH_SHARE_HASHTAG = "#DotaApp";
+        private static final String MATCH_SHARE_HASHTAG = " #DotaApp";
         private static final String LOG_TAG = DetailFragment.class.getSimpleName();
         private String mMatchStr;
 
