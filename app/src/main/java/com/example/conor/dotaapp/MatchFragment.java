@@ -1,6 +1,9 @@
 package com.example.conor.dotaapp;
 
 
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -15,8 +18,9 @@ import android.widget.ListView;
 
 import com.example.conor.dotaapp.data.MatchContract;
 
-public class MatchFragment extends Fragment {
+public class MatchFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>{
 
+    private static final int MATCH_LOADER = 0;
     private MatchAdapter mMatchAdapter;
 
     public MatchFragment() {
@@ -104,5 +108,34 @@ public class MatchFragment extends Fragment {
     public void onStart(){
         super.onStart();
         updateMatch();
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+        String steamId = Utility.getSteamAccountId(getActivity());
+
+        //sort order
+        String sortOrder = MatchContract.MatchEntry.COLUMN_START_TIME + " ASC";
+        Uri matchForPlayerUri = MatchContract.MatchEntry.buildMatchPlayerWithStartTime(
+                steamId, System.currentTimeMillis()
+        );
+
+        return new CursorLoader(getActivity(),
+                matchForPlayerUri,
+                null,
+                null,
+                null,
+                sortOrder
+        );
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
+        mMatchAdapter.swapCursor(cursor);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> cursorLoader) {
+        mMatchAdapter.swapCursor(null);
     }
 }
