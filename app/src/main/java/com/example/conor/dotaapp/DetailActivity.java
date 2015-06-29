@@ -1,10 +1,14 @@
 package com.example.conor.dotaapp;
 
-import android.support.v7.app.ActionBarActivity;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.ShareActionProvider;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -14,6 +18,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import com.example.conor.dotaapp.data.MatchContract;
 
 
 public class DetailActivity extends ActionBarActivity {
@@ -56,11 +62,30 @@ public class DetailActivity extends ActionBarActivity {
     /**
      * A placeholder fragment containing a simple view.
      */
-    public static class DetailFragment extends Fragment {
+    public static class DetailFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
         private static final String MATCH_SHARE_HASHTAG = " #DotaApp";
         private static final String LOG_TAG = DetailFragment.class.getSimpleName();
-        private String mMatchStr;
+
+        private ShareActionProvider mShareActionProvider;
+        private String mMatch;
+
+        private static final int DETAIL_LOADER = 0;
+
+        private static final String[] MATCH_COLUMNS = {
+                MatchContract.MatchEntry.TABLE_NAME + "." + MatchContract.MatchEntry._ID,
+                MatchContract.MatchEntry.COLUMN_MATCH_KEY,
+                MatchContract.MatchEntry.COLUMN_START_TIME,
+                MatchContract.MatchEntry.COLUMN_P_ACCOUNT_ID,
+                MatchContract.PlayerEntry.COLUMN_HERO_ID,
+                MatchContract.PlayerEntry.COLUMN_P_SLOT
+        };
+
+        static final int COL_MATCH_KEY = 0;
+        static final int COL_START_TIME = 1;
+        static final int COL_STEAM_ID = 2;
+        static final int COL_HERO_ID = 3;
+        static final int COL_P_SLOT = 4;
 
         public DetailFragment() {
             setHasOptionsMenu(true);
@@ -69,19 +94,9 @@ public class DetailActivity extends ActionBarActivity {
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
-            //receive intent from MatchFragment
-            Intent intent = getActivity().getIntent();
-            View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
-
-            // The detail Activity called via intent.
-            if(intent != null && intent.hasExtra(Intent.EXTRA_TEXT)){
-                mMatchStr = intent.getStringExtra(Intent.EXTRA_TEXT);
-                ((TextView) rootView.findViewById(R.id.detail_text))
-                        .setText(mMatchStr);
-            }
-
-            return rootView;
+            return inflater.inflate(R.layout.fragment_detail, container, false);
         }
+
         @Override
         public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
             //Inflate menu; adds items to the action bar if it is present
@@ -91,15 +106,11 @@ public class DetailActivity extends ActionBarActivity {
             MenuItem menuItem = menu.findItem(R.id.action_share);
 
             //Get provider and hold onto it to set/change share intent
-            ShareActionProvider mShareActionProvider;
             mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(menuItem);
 
             //Attach intent to this ShareProvider
-            if(mShareActionProvider != null){
+            if(mMatch != null){
                 mShareActionProvider.setShareIntent(createShareMatchIntent());
-            }
-            else {
-                Log.d(LOG_TAG, "Share Action Provider is null?");
             }
         }
 
@@ -107,11 +118,63 @@ public class DetailActivity extends ActionBarActivity {
             Intent shareIntent = new Intent(Intent.ACTION_SEND);
             shareIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
             shareIntent.setType("text/plain");
-            shareIntent.putExtra(Intent.EXTRA_TEXT,
-                    mMatchStr + MATCH_SHARE_HASHTAG);
             return shareIntent;
         }
 
+        @Override
+        public void onActivityCreated(Bundle savedInstanceState) {
+            getLoaderManager().initLoader(DETAIL_LOADER, null, this);
+            super.onActivityCreated(savedInstanceState);
+        }
 
+        @Override
+        public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+            Log.v(LOG_TAG, "In onCreateLoader");
+            Intent intent = getActivity().getIntent();
+            if(intent == null){
+                return null;
+            }
+
+            //create and return loader
+            return new CursorLoader(
+                    getActivity(),
+                    intent.getData(),
+                    MATCH_COLUMNS,
+                    null,
+                    null,
+                    null
+            );
+        }
+
+        @Override
+        public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+            Log.v(LOG_TAG, "In onLoadFinished");
+
+            if(!data.moveToFirst()){
+                return;
+            }
+            //FORMAT DATA
+            String dateString = Utility.formatDate(data.getLong(COL_START_TIME));
+            String matchId = data.getString(COL_MATCH_KEY);
+            String playerId = Utility.getSteamAccountId(getActivity());
+            String heroId = data.getString(COL_HERO_ID);
+            String playerSlot = data.getString(COL_P_SLOT);
+
+            mMatch = String.format("Date: %s, MatchID: %s, HeroID: %s, SteamID: %s", dateString, matchId, heroId, playerId);
+
+            TextView detailTextView = (TextView)getView().findViewById(R.id.detail_text);
+            detailTextView.setText(mMatch);
+
+            //If onCreateOptionsMenu has already happened, we need to update share intent
+            if (mShareActionProvider != null){
+                mShareActionProvider.setShareIntent(createShareMatchIntent());
+            }
+
+        }
+
+        @Override
+        public void onLoaderReset(Loader<Cursor> loader) {
+
+        }
     }
 }

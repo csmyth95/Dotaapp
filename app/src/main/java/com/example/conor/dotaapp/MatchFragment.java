@@ -1,19 +1,21 @@
 package com.example.conor.dotaapp;
 
 
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.CursorLoader;
-import android.support.v4.content.Loader;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.example.conor.dotaapp.data.MatchContract;
@@ -21,6 +23,22 @@ import com.example.conor.dotaapp.data.MatchContract;
 public class MatchFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>{
 
     private static final int MATCH_LOADER = 0;
+
+    private static final String[] MATCH_COLUMNS = {
+            MatchContract.MatchEntry.TABLE_NAME + "." + MatchContract.MatchEntry._ID,
+            MatchContract.MatchEntry.COLUMN_MATCH_KEY,
+            MatchContract.MatchEntry.COLUMN_START_TIME,
+            MatchContract.MatchEntry.COLUMN_P_ACCOUNT_ID,
+            MatchContract.PlayerEntry.COLUMN_HERO_ID,
+            MatchContract.PlayerEntry.COLUMN_P_SLOT
+    };
+
+    static final int COL_MATCH_KEY = 0;
+    static final int COL_START_TIME = 1;
+    static final int COL_STEAM_ID = 2;
+    static final int COL_HERO_ID = 3;
+    static final int COL_P_SLOT = 4;
+
     private MatchAdapter mMatchAdapter;
 
     public MatchFragment() {
@@ -91,7 +109,37 @@ public class MatchFragment extends Fragment implements LoaderManager.LoaderCallb
         ListView listView = (ListView) rootView.findViewById(R.id.listview_match);
         listView.setAdapter(mMatchAdapter);
 
+        //Call MainActivity
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+           @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l){
+               //CursorAdapter returns a cursor at the correct position for getItem(), or null
+               // if it cannot seek to that position
+               Cursor cursor = (Cursor) adapterView.getItemAtPosition(position);
+               if(cursor != null){
+                   String steamId = Utility.getSteamAccountId(getActivity());
+                   Intent intent = new Intent(getActivity(), DetailActivity.class)
+                           .setData(MatchContract.MatchEntry.buildMatchPlayerWithDate(
+                              steamId, cursor.getLong(COL_START_TIME)
+                           ));
+                   startActivity(intent);
+               }
+           }
+        });
+
         return rootView;
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        getLoaderManager().initLoader(MATCH_LOADER, null, this);
+        super.onActivityCreated(savedInstanceState);
+    }
+
+    // since we read the location when we create the loader, all we need to do is restart things
+    void onSteamIdChanged( ) {
+        updateMatch();
+        getLoaderManager().restartLoader(MATCH_LOADER, null, this);
     }
 
     //Method to update match data when app starts
@@ -104,11 +152,11 @@ public class MatchFragment extends Fragment implements LoaderManager.LoaderCallb
         matchTask.execute(defaultID, numMatches);
     }
 
-    @Override
-    public void onStart(){
-        super.onStart();
-        updateMatch();
-    }
+//    @Override
+//    public void onStart(){
+//        super.onStart();
+//        updateMatch();
+//    }
 
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
@@ -122,7 +170,7 @@ public class MatchFragment extends Fragment implements LoaderManager.LoaderCallb
 
         return new CursorLoader(getActivity(),
                 matchForPlayerUri,
-                null,
+                MATCH_COLUMNS,
                 null,
                 null,
                 sortOrder
