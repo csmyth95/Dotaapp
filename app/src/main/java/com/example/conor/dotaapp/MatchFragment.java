@@ -72,10 +72,10 @@ public class MatchFragment extends Fragment implements LoaderManager.LoaderCallb
 
         // Sort order:  Ascending, by date.
         String sortOrder = MatchContract.MatchEntry.COLUMN_START_TIME + " ASC";
-        Uri weatherForLocationUri = MatchContract.MatchEntry.buildMatchPlayerWithDate(
+        Uri matchForPlayerUri = MatchContract.MatchEntry.buildMatchPlayerWithDate(
                 steamAccountId, System.currentTimeMillis());
 
-        Cursor cur = getActivity().getContentResolver().query(weatherForLocationUri,
+        Cursor cur = getActivity().getContentResolver().query(matchForPlayerUri,
                 null, null, null, sortOrder);
 
         // The CursorAdapter will take data from our cursor and populate the ListView
@@ -151,12 +151,6 @@ public class MatchFragment extends Fragment implements LoaderManager.LoaderCallb
         String numMatches = Utility.getPreferredNumMatches(getActivity());
         matchTask.execute(defaultID, numMatches);
     }
-
-//    @Override
-//    public void onStart(){
-//        super.onStart();
-//        updateMatch();
-//    }
 
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {

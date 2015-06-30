@@ -32,7 +32,6 @@ public class MatchProvider extends ContentProvider {
 
     static final int MATCH = 100; //Used to be 100
     static final int PLAYER = 300;
-    static final int HERO = 500;
     static final int MATCH_WITH_PLAYER = 101;
     static final int MATCH_WITH_PLAYER_AND_DATE = 102;
 
@@ -104,13 +103,13 @@ public class MatchProvider extends ContentProvider {
 
     private Cursor getMatchBySteamIdAndDate(
             Uri uri, String[] projection, String sortOrder) {
-        String locationSetting = MatchContract.MatchEntry.getSteamIdFromUri(uri);
+        String steamId = MatchContract.MatchEntry.getSteamIdFromUri(uri);
         long date = MatchContract.MatchEntry.getDateFromUri(uri);
 
         return sMatchBySteamIdQueryBuilder.query(mOpenHelper.getReadableDatabase(),
                 projection,
                 sSteamIdWithStartDateSelection,
-                new String[]{locationSetting, Long.toString(date)},
+                new String[]{steamId, Long.toString(date)},
                 null,
                 null,
                 sortOrder
@@ -132,7 +131,8 @@ public class MatchProvider extends ContentProvider {
         // MatchContract to help define the types to the UriMatcher.
         matcher.addURI(authority, MatchContract.PATH_MATCH, MATCH);
         matcher.addURI(authority, MatchContract.PATH_MATCH + "/*", MATCH_WITH_PLAYER);
-        matcher.addURI(authority, MatchContract.PATH_MATCH + "/*/#", MATCH_WITH_PLAYER_AND_DATE);
+        matcher.addURI(authority, MatchContract.PATH_MATCH + "/*/*", MATCH_WITH_PLAYER_AND_DATE);
+        //matcher.addURI(authority, MatchContract.PATH_MATCH + "/*/#", MATCH_WITH_PLAYER_AND_DATE);
         matcher.addURI(authority, MatchContract.PATH_PLAYER, PLAYER);
 //        matcher.addURI(authority, MatchContract.PATH_HERO, HERO);
 

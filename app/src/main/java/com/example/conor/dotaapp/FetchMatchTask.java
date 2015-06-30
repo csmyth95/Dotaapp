@@ -95,8 +95,8 @@ public class FetchMatchTask extends AsyncTask<String, Void, Void> {
             // Then add the data, along with the corresponding name of the data type,
             // so the content provider knows what kind of value is being inserted.
             playerValues.put(MatchContract.PlayerEntry.COLUMN_ACCOUNT_ID, steamAccountId);
-            playerValues.put(MatchContract.PlayerEntry.COLUMN_P_SLOT, playerSlot);
             playerValues.put(MatchContract.PlayerEntry.COLUMN_HERO_ID, heroId);
+            playerValues.put(MatchContract.PlayerEntry.COLUMN_P_SLOT, playerSlot);
 
             // Finally, insert location data into the database.
             Uri insertedUri = mContext.getContentResolver().insert(
