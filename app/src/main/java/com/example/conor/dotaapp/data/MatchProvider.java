@@ -67,7 +67,11 @@ public class MatchProvider extends ContentProvider {
     private static final String sSteamIdWithStartDateSelection =
             MatchContract.PlayerEntry.TABLE_NAME+
                     "." + MatchContract.PlayerEntry.COLUMN_ACCOUNT_ID + " = ? AND " +
-                    MatchContract.MatchEntry.COLUMN_START_TIME + " >= ? ";
+                    MatchContract.MatchEntry.COLUMN_START_TIME + " = ? ";
+
+//    MatchContract.PlayerEntry.TABLE_NAME+
+//            "." + MatchContract.PlayerEntry.COLUMN_ACCOUNT_ID + " = ? AND " +
+//    MatchContract.MatchEntry.COLUMN_START_TIME + " >= ? ";
 
     /**COULD CHANGE TO NUMBER OF MATCHES SELECTION????? */
 //    //location.location_setting = ? AND date = ?

@@ -38,8 +38,7 @@
         <provider
             android:authorities="com.example.conor.dotaapp"
             android:name=".data.MatchProvider"
-
-            android:exported="true"
+            android:exported="false"
         /><!--android:enabled="true"-->
     </application>
 

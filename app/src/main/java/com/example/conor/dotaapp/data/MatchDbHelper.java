@@ -38,24 +38,14 @@ public class MatchDbHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
-//        //Create a table to hold hero data e.g heo_id and localized_name
-//        final String SQL_CREATE_HERO_TABLE = "CREATE TABLE " + PlayerEntry.TABLE_NAME + " (" +
-//                HeroEntry._ID + " INTEGER PRIMARY KEY," +
-//                HeroEntry.COLUMN_HERO_ID + " INTEGER NOT NULL, " +
-//                HeroEntry.COLUMN_LOCAL_NAME + " TEXT NOT NULL, " +
-//                " );";
-
         // Create a table to hold player data.  A player object consists of a steam account_id,
         // and a hero_id
         final String SQL_CREATE_PLAYER_TABLE = "CREATE TABLE " + PlayerEntry.TABLE_NAME + " (" +
-                PlayerEntry._ID + " INTEGER PRIMARY KEY," +
+                PlayerEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT," +
                 PlayerEntry.COLUMN_ACCOUNT_ID + " TEXT NOT NULL, " +
                 PlayerEntry.COLUMN_HERO_ID + " TEXT NOT NULL, " +
-                PlayerEntry.COLUMN_P_SLOT + " INTEGER NOT NULL " +
+                PlayerEntry.COLUMN_P_SLOT + " INTEGER NOT NULL, " +
                 ");";
-                //                // Set up the account id column as a foreign key to player table.
-//                " FOREIGN KEY (" + PlayerEntry.COLUMN_HERO_ID + ") REFERENCES " +
-//                HeroEntry.TABLE_NAME + " (" + HeroEntry.COLUMN_HERO_ID + "), " +
 
         final String SQL_CREATE_MATCH_TABLE = "CREATE TABLE " + MatchEntry.TABLE_NAME + " (" +
                 // Unique keys will be auto-generated .  But for DOTA 2 matches,
