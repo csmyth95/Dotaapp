@@ -18,6 +18,7 @@ package com.example.conor.dotaapp.data;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import com.example.conor.dotaapp.data.MatchContract.MatchEntry;
 import com.example.conor.dotaapp.data.MatchContract.PlayerEntry;
@@ -28,9 +29,9 @@ import com.example.conor.dotaapp.data.MatchContract.PlayerEntry;
 public class MatchDbHelper extends SQLiteOpenHelper {
 
     // If you change the database schema, you must increment the database version.
+    private static final String DEBUG_TAG = "MatchDBHelper_Tag";
     private static final int DATABASE_VERSION = 2;
-
-    static final String DATABASE_NAME = "weather.db";
+    static final String DATABASE_NAME = "match.db";
 
     public MatchDbHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -81,6 +82,8 @@ public class MatchDbHelper extends SQLiteOpenHelper {
         // If you want to update the schema without wiping data, commenting out the next 2 lines
         // should be your top priority before modifying this method.
 //        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + HeroEntry.TABLE_NAME);
+        Log.w(DEBUG_TAG, "Upgrading database. Existing contents will be lost. ["
+                + oldVersion + "]->[" + newVersion + "]");
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + PlayerEntry.TABLE_NAME);
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + MatchEntry.TABLE_NAME);
         onCreate(sqLiteDatabase);

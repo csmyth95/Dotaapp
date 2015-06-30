@@ -9,6 +9,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v4.widget.CursorAdapter;
+import android.support.v4.widget.SimpleCursorAdapter;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -19,6 +21,8 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.example.conor.dotaapp.data.MatchContract;
+import com.example.conor.dotaapp.data.MatchDbHelper;
+import com.example.conor.dotaapp.data.MatchProvider;
 
 public class MatchFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>{
 
@@ -47,7 +51,36 @@ public class MatchFragment extends Fragment implements LoaderManager.LoaderCallb
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //NEW TUTORIAL
+        String[] projection = { "2", "match.db" };
+        String[] uiBindFrom = {"match.db"};
+        int[] uiBindTo = { R.id.title };
+
+        Cursor matches = getActivity().managedQuery(
+                MatchContract.MatchEntry.CONTENT_URI, projection, null, null, null);
+
+        CursorAdapter adapter = new SimpleCursorAdapter(getActivity()
+                .getApplicationContext(), R.layout.list_item_match, matches,
+                uiBindFrom, uiBindTo);
+
+        View view;
+        ListView listView = (ListView) view.findViewById(R.id.listview_match);
+        listView.setAdapter(adapter);
         setHasOptionsMenu(true);
+
+    }
+    //NEW TUTORIAL
+    @Override
+    public void onListItemClick(ListView l, View v, int position, long id) {
+        String projection[] = { MatchContract.PATH_PLAYER };
+        Cursor matchCursor = getActivity().getContentResolver().query(
+                Uri.withAppendedPath(MatchContract.PlayerEntry.CONTENT_URI,
+                        String.valueOf(id)), projection, null, null, null);
+        if (matchCursor.moveToFirst()) {
+            String matchPlayer = matchCursor.getString(0);
+            matchSelectedListener.onMatchSelected(matchPlayer);
+        }
+        matchCursor.close();
     }
 
     @Override

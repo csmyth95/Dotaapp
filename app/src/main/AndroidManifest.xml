@@ -36,9 +36,10 @@
                 android:value=".MainActivity" />
         </activity>
         <provider
-            android:authorities="com.example.conor.dotaapp"
-            android:name=".data.MatchProvider"
+            android:authorities="com.example.conor.dotaapp.data.MatchProvider"
+            android:name="com.example.conor.dotaapp.data.MatchProvider"
             android:exported="false"
+            android:multiprocess="true"
         /><!--android:enabled="true"-->
     </application>
 

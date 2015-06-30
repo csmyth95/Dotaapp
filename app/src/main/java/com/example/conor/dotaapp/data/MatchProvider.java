@@ -28,7 +28,10 @@ public class MatchProvider extends ContentProvider {
 
     // The URI Matcher used by this content provider.
     private static final UriMatcher sUriMatcher = buildUriMatcher();
+    //instance of the db
     private MatchDbHelper mOpenHelper;
+
+
 
     static final int MATCH = 100; //Used to be 100
     static final int PLAYER = 300;
@@ -49,12 +52,7 @@ public class MatchProvider extends ContentProvider {
                         "." + MatchContract.MatchEntry.COLUMN_MATCH_KEY +
                         " = " + MatchContract.PlayerEntry.TABLE_NAME +
                         "." + MatchContract.PlayerEntry._ID
-// + " INNER JOIN " +
-//                        MatchContract.HeroEntry.TABLE_NAME + " ON " + MatchContract.HeroEntry.TABLE_NAME +
-//                        "." + MatchContract.HeroEntry.COLUMN_HERO_ID +
-//                        " = " + MatchContract.PlayerEntry.TABLE_NAME + "." +
-//                                MatchContract.PlayerEntry.COLUMN_HERO_ID
-                        );
+                );
     }
 
     //MIGHT NEED TO CHANGE THIS TO SUIT DOTA API JSON STRING
@@ -81,6 +79,7 @@ public class MatchProvider extends ContentProvider {
 //                    MatchContract.MatchEntry. + " = ? ";
 
   private Cursor getMatchBySteamId(Uri uri, String[] projection, String sortOrder) {
+        //Local variables
         String steamId = MatchContract.MatchEntry.getSteamIdFromUri(uri);
         long startDate = MatchContract.MatchEntry.getStartDateFromUri(uri);
 
@@ -137,8 +136,7 @@ public class MatchProvider extends ContentProvider {
         matcher.addURI(authority, MatchContract.PATH_MATCH + "/*", MATCH_WITH_PLAYER);
         matcher.addURI(authority, MatchContract.PATH_MATCH + "/*/#", MATCH_WITH_PLAYER_AND_DATE);
         //matcher.addURI(authority, MatchContract.PATH_MATCH + "/*/*", MATCH_WITH_PLAYER_AND_DATE);
-        matcher.addURI(authority, MatchContract.PATH_PLAYER, PLAYER);
-//        matcher.addURI(authority, MatchContract.PATH_HERO, HERO);
+        //matcher.addURI(authority, MatchContract.PATH_PLAYER, PLAYER);
 
         //Return the new matcher
         return matcher;
@@ -176,6 +174,33 @@ public class MatchProvider extends ContentProvider {
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
     }
+/* TUTORIAL CODE
+@Override
+public Cursor query(Uri uri, String[] projection, String selection,
+        String[] selectionArgs, String sortOrder) {
+    SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
+    queryBuilder.setTables(TutListDatabase.TABLE_TUTORIALS);
+
+    int uriType = sURIMatcher.match(uri);
+    switch (uriType) {
+    case TUTORIAL_ID:
+        queryBuilder.appendWhere(TutListDatabase.ID + "="
+                + uri.getLastPathSegment());
+        break;
+    case TUTORIALS:
+        // no filter
+        break;
+    default:
+        throw new IllegalArgumentException("Unknown URI");
+    }
+
+    Cursor cursor = queryBuilder.query(mDB.getReadableDatabase(),
+            projection, selection, selectionArgs, null, null, sortOrder);
+    cursor.setNotificationUri(getContext().getContentResolver(), uri);
+    return cursor;
+}
+ */
+
 
     @Override
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs,
@@ -183,7 +208,9 @@ public class MatchProvider extends ContentProvider {
         // Here's the switch statement that, given a URI, will determine what kind of request it is,
         // and query the database accordingly.
         Cursor retCursor;
-        switch (sUriMatcher.match(uri)) {
+
+        int uriType = sUriMatcher.match(uri);
+        switch (uriType) {
             // "match/*/*"
             case MATCH_WITH_PLAYER_AND_DATE:
             {
@@ -218,22 +245,9 @@ public class MatchProvider extends ContentProvider {
                         null,
                         null,
                         sortOrder
-                );;
+                );
                 break;
             }
-//            // "hero"
-//            case HERO: {
-//                retCursor = mOpenHelper.getReadableDatabase().query(
-//                        MatchContract.HeroEntry.TABLE_NAME,
-//                        projection,
-//                        selection,
-//                        selectionArgs,
-//                        null,
-//                        null,
-//                        sortOrder
-//                );;
-//                break;
-//            }
 
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);

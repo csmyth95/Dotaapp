@@ -12,10 +12,11 @@ import android.text.format.Time;
 public class MatchContract {
 
     //content authority is a name for entire content provider
-    public static final String CONTENT_AUTHORITY = "com.example.conor.dotaapp.data";
-    public static final Uri BASE_CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
+    public static final String CONTENT_AUTHORITY = "com.example.conor.dotaapp.data.MatchProvider";
     public static final String PATH_MATCH = "match";
     public static final String PATH_PLAYER= "player";
+    public static final Uri BASE_CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY + "/" + PATH_MATCH);
+
 //    public static final String PATH_HERO = "hero";
 
     // To make it easy to query for the exact date, we normalize all dates that go into
@@ -37,10 +38,10 @@ public class MatchContract {
 
         //Many item return
         public static final String CONTENT_TYPE =
-                ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_PLAYER;
+                ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + PATH_PLAYER;
         //Single item return
         public static final String CONTENT_ITEM_TYPE =
-                ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_PLAYER;
+                ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + PATH_PLAYER;
 
         public static final String TABLE_NAME = "player";
         // Steam account id of the user
@@ -55,39 +56,15 @@ public class MatchContract {
         }
     }
 
-//    /*
-//        Inner class that defines the contents of the hero table
-//     */
-//
-//    public static final class HeroEntry implements BaseColumns {
-//        public static final Uri CONTENT_URI =
-//                BASE_CONTENT_URI.buildUpon().appendPath(PATH_HERO).build();
-//
-//        public static final String CONTENT_TYPE =
-//                ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_HERO;
-//        public static final String CONTENT_ITEM_TYPE =
-//                ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_HERO;
-//
-//        public static final String TABLE_NAME = "hero";
-//        // Id of the hero
-//        public static final String COLUMN_HERO_ID = "hero_id";
-//        // Name of the hero
-//        public static final String COLUMN_LOCAL_NAME = "localized_name";
-//
-//        public static Uri buildHeroUri(long id) {
-//            return ContentUris.withAppendedId(CONTENT_URI, id);
-//        }
-//    }
-
     /* Inner class that defines the contents of the match table */
     public static final class MatchEntry implements BaseColumns {
         public static final Uri CONTENT_URI =
                 BASE_CONTENT_URI.buildUpon().appendPath(PATH_MATCH).build();
 
         public static final String CONTENT_TYPE =
-                ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_MATCH;
+                ContentResolver.CURSOR_DIR_BASE_TYPE + "/" + PATH_MATCH;
         public static final String CONTENT_ITEM_TYPE =
-                ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + CONTENT_AUTHORITY + "/" + PATH_MATCH;
+                ContentResolver.CURSOR_ITEM_BASE_TYPE + "/" + PATH_MATCH;
 
         public static final String TABLE_NAME = "match";
         // Column with the ID of a match of the user

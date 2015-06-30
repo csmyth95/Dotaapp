@@ -6,6 +6,7 @@ import android.support.v4.widget.CursorAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 /**
@@ -50,10 +51,24 @@ public class MatchAdapter extends CursorAdapter {
      */
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
-        // our view is pretty simple here --- just a text view
-        // we'll keep the UI functional with a simple (and slow!) binding.
+        int matchId = cursor.getInt(MatchFragment.COL_MATCH_KEY);
+        TextView matchIdView = (TextView) view.findViewById(R.id.list_item_matchId_textView);
+        matchIdView.setText(matchId);
 
-        TextView tv = (TextView)view;
-        tv.setText(convertCursorRowToUXFormat(cursor));
+        ImageView iconView = (ImageView) view.findViewById(R.id.list_item_icon);
+        iconView.setImageResource(R.mipmap.ic_launcher);
+
+        //read data from cursor
+        int dateinUTC = cursor.getInt(MatchFragment.COL_START_TIME);
+        //find textview
+        TextView dateView = (TextView) view.findViewById(R.id.list_item_date_textView);
+        dateView.setText(Utility.formatDate(dateinUTC));
+
+        //read match data from cursor
+        String playerHero = cursor.getString(MatchFragment.COL_HERO_ID);
+        //find textview and set match data to it
+        TextView matchView = (TextView) view.findViewById(R.id.list_item_heroId_textView);
+
+        matchView.setText(playerHero);
     }
 }
