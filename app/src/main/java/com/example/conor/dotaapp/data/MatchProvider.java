@@ -135,12 +135,12 @@ public class MatchProvider extends ContentProvider {
         // MatchContract to help define the types to the UriMatcher.
         matcher.addURI(authority, MatchContract.PATH_MATCH, MATCH);
         matcher.addURI(authority, MatchContract.PATH_MATCH + "/*", MATCH_WITH_PLAYER);
-        matcher.addURI(authority, MatchContract.PATH_MATCH + "/*/*", MATCH_WITH_PLAYER_AND_DATE);
-        //matcher.addURI(authority, MatchContract.PATH_MATCH + "/*/#", MATCH_WITH_PLAYER_AND_DATE);
+        matcher.addURI(authority, MatchContract.PATH_MATCH + "/*/#", MATCH_WITH_PLAYER_AND_DATE);
+        //matcher.addURI(authority, MatchContract.PATH_MATCH + "/*/*", MATCH_WITH_PLAYER_AND_DATE);
         matcher.addURI(authority, MatchContract.PATH_PLAYER, PLAYER);
 //        matcher.addURI(authority, MatchContract.PATH_HERO, HERO);
 
-        // 3) Return the new matcher!
+        //Return the new matcher
         return matcher;
     }
 
@@ -172,8 +172,6 @@ public class MatchProvider extends ContentProvider {
                 return MatchContract.MatchEntry.CONTENT_TYPE;
             case PLAYER:
                 return MatchContract.PlayerEntry.CONTENT_TYPE;
-//            case HERO:
-//                return MatchContract.HeroEntry.CONTENT_TYPE;
             default:
                 throw new UnsupportedOperationException("Unknown uri: " + uri);
         }
