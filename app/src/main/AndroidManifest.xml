@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.conor.dotaapp" >
 
-    <!--internet permission-->
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <!-- internet permission -->
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -19,6 +19,28 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".DetailActivity"
+            android:label="@string/title_activity_detail"
+            android:parentActivityName=".MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="MainActivity" />
+        </activity>
+        <activity
+            android:name=".SettingsActivity"
+            android:label="@string/title_activity_settings"
+            android:parentActivityName=".MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MainActivity" />
+        </activity>
+        <provider
+            android:authorities="com.example.conor.dotaapp.data.MatchProvider"
+            android:name="com.example.conor.dotaapp.data.MatchProvider"
+            android:exported="false"
+            android:multiprocess="true"
+        /><!--android:enabled="true"-->
     </application>
 
 </manifest>

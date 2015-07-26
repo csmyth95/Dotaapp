@@ -1,6 +1,27 @@
 <resources>
     <string name="app_name">Dotapp</string>
-    <string name="hello_world">Hello world!</string>
+    <string name="hello_world">Hello World</string>
     <string name="action_refresh">Refresh</string>
+
+    <!-- Action bar strings -->
     <string name="action_settings">Settings</string>
+    <string name="action_share">Share</string>
+
+    <string name="title_activity_detail">Details</string>
+    <string name="title_activity_settings">Settings</string>
+
+    <!-- *********MAY NEED TO CHANGE TO INT********** -->
+    <!-- label for number of matches to display setting -->
+    <string name="num_matches_label">NumberOfMatches</string>
+    <!-- Key name for storing numMatches in SharedPreferences -->
+    <string name="num_matches_key" translatable="false">numMatches</string>
+    <!-- Deafult match number for num_matches preference -->
+    <string name="num_matches_default" translatable="false">5</string>
+
+    <!-- Strings for Default ID preference in pref_general.xml -->
+    <string name="steam_id_label">SteamAccountID</string>
+    <string name="steam_id_key" translatable="false">defaultID</string>
+    <string name="steam_id_default" translatable="false">144396115</string>
+
+
 </resources>
